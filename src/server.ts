@@ -24,10 +24,24 @@ const books: Book[] = [
     },
 ];
 
-// GET /books
+// GET /books (search by title prefix)
 app.get("/books", (req: Request, res: Response) => {
-    res.json(books);
+    const titleQuery = req.query.title as string;
+
+    if (titleQuery) {
+        // ค้นหาชื่อที่ขึ้นต้นด้วยคำค้นแบบไม่สนตัวพิมพ์เล็กใหญ่
+        const filteredBooks = books.filter(book =>
+            book.title.toLowerCase().startsWith(titleQuery.toLowerCase())
+        );
+        res.json(filteredBooks);
+    } else {
+        // ถ้าไม่ส่ง query parameter ให้คืนทั้งหมด
+        res.json(books);
+    }
 });
+
+
+
 
 // Start server
 app.listen(port, () => {
