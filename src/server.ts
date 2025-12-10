@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 const app = express();
 const port = 3000;
 
+app.use(express.json());
+
 interface Book {
     id: number;
     title: string;
@@ -55,6 +57,31 @@ app.get("/books/:id", (req, res) => {
         res.status(404).send("Book not found");
     }
 });
+app.post("/books", (req, res) => {
+    const newBook = req.body;
+
+    // เช็คว่ามี id ส่งเข้ามาไหม
+    if (!newBook.id) {
+        // ถ้าไม่มี id ให้สร้างใหม่เป็น running number
+        newBook.id = books.length + 1;
+        books.push(newBook);
+        return res.json({ message: "Book added", book: newBook });
+    }
+
+    // ถ้ามี id ให้เช็คว่ามีในระบบไหม
+    const index = books.findIndex((b) => b.id === newBook.id);
+
+    if (index !== -1) {
+        // update ข้อมูล
+        books[index] = { ...books[index], ...newBook };
+        return res.json({ message: "Book updated", book: books[index] });
+    } else {
+        // ถ้า id ไม่มี → เพิ่มใหม่
+        books.push(newBook);
+        return res.json({ message: "Book added with provided id", book: newBook });
+    }
+});
+
 
 
 // Start server
