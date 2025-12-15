@@ -1,5 +1,4 @@
 import type Book from "../models/book";
-import * as repo from "../repository/BookRepository";
 
 const books: Book[] = [
     {
@@ -18,15 +17,16 @@ const books: Book[] = [
     },
 ];
 
-
 export function getAllBooks(): Promise<Book[]> {
-    return repo.getAllBooks();
+    return Promise.resolve(books);
 }
 
 export function getBookById(id: number): Promise<Book | undefined> {
-    return repo.getBookById(id);
+    return Promise.resolve(books.find((b) => b.id === id));
 }
 
 export function addBook(newBook: Book): Promise<Book> {
-    return repo.addBook(newBook);
+    newBook.id = books.length + 1;
+    books.push(newBook);
+    return Promise.resolve(newBook);
 }

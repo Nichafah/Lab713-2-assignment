@@ -1,35 +1,16 @@
 import express, { Request, Response } from "express";
+import { getAllBooks, getBookById, addBook } from "./services/bookservice";
 import type Book from "./models/book";
-import {
-    getAllBooks,
-    getBookById,
-    getBookByTitlePrefix,
-    addOrUpdateBook,
-} from "./services/bookservice";
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 
-// ---------- Routes ----------
-
-app.get("/", (req: Request, res: Response) => {
-    res.send("Book API");
-});
-
-// GET /books?title=Clean
 app.get("/books", async (req: Request, res: Response) => {
-    if (req.query.title) {
-        const title = req.query.title as string;
-        const books = await getBookByTitlePrefix(title);
-        res.json(books);
-    } else {
-        res.json(await getAllBooks());
-    }
+    res.json(await getAllBooks());
 });
 
-// GET /books/:id
 app.get("/books/:id", async (req: Request, res: Response) => {
     // @ts-ignore
     const id = parseInt(req.params.id);
@@ -42,18 +23,15 @@ app.get("/books/:id", async (req: Request, res: Response) => {
     }
 });
 
-// POST /books (add หรือ update)
 app.post("/books", async (req: Request, res: Response) => {
     const newBook: Book = req.body;
-    const savedBook = await addOrUpdateBook(newBook);
-    res.json(savedBook);
+    res.json(await addBook(newBook));
 });
-
-// ---------- Start Server ----------
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+
 
 
 
