@@ -1,32 +1,27 @@
-import type Book from "../models/book";
+import { query } from "../db"
+import type Book from "../models/book"
 
-const books: Book[] = [
-    {
-        id: 1,
-        title: "Clean Code",
-        author_name: "Robert C. Martin",
-        description: "A handbook of agile software craftsmanship",
-        group: "Programming",
-    },
-    {
-        id: 2,
-        title: "Atomic Habits",
-        author_name: "James Clear",
-        description: "How to build good habits",
-        group: "Self-Improvement",
-    },
-];
-
-export function getAllBooks(): Promise<Book[]> {
-    return Promise.resolve(books);
+export async function getAllBooks(): Promise<Book[]> {
+    const result = await query("SELECT * FROM books ORDER BY id")
+    return result.rows
 }
 
-export function getBookById(id: number): Promise<Book | undefined> {
-    return Promise.resolve(books.find((b) => b.id === id));
+export async function getBookById(id: number): Promise<Book | null> {
+    const result = await query(
+        "SELECT * FROM books WHERE id = $1",
+        [id]
+    )
+    return result.rows[0] ?? null
 }
 
-export function addBook(newBook: Book): Promise<Book> {
-    newBook.id = books.length + 1;
-    books.push(newBook);
-    return Promise.resolve(newBook);
+export async function addBook(book: Omit<Book, "id">): Promise<Book> {
+    const result = await query(
+        `INSERT INTO books (title, author_name, description, "group")
+         VALUES ($1, $2, $3, $4)
+         RETURNING *`,
+        [book.title, book.author_name, book.description, book.group]
+    )
+    return result.rows[0]
 }
+
+

@@ -1,36 +1,35 @@
-import express, { Request, Response } from "express";
-import { getAllBooks, getBookById, addBook } from "./services/bookservice";
-import type Book from "./models/book";
+import express from "express"
+import { getAllBooks, getBookById, addBook } from "./services/bookservice"
 
-const app = express();
-const port = 3000;
+const app = express()
+const port = 3000
 
-app.use(express.json());
+app.use(express.json())
 
-app.get("/books", async (req: Request, res: Response) => {
-    res.json(await getAllBooks());
-});
+app.get("/books", async (req, res) => {
+    res.json(await getAllBooks())
+})
 
-app.get("/books/:id", async (req: Request, res: Response) => {
-    // @ts-ignore
-    const id = parseInt(req.params.id);
-    const book = await getBookById(id);
+app.get("/books/:id", async (req, res) => {
+    const id = Number(req.params.id)
+    const book = await getBookById(id)
 
-    if (book) {
-        res.json(book);
-    } else {
-        res.status(404).send("Book not found");
+    if (!book) {
+        return res.status(404).send("Book not found")
     }
-});
 
-app.post("/books", async (req: Request, res: Response) => {
-    const newBook: Book = req.body;
-    res.json(await addBook(newBook));
-});
+    res.json(book)
+})
+
+app.post("/books", async (req, res) => {
+    const book = await addBook(req.body)
+    res.status(201).json(book)
+})
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+    console.log(`Server running at http://localhost:${port}`)
+})
+
 
 
 

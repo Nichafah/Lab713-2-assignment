@@ -1,21 +1,8 @@
 import type Book from "../models/book";
-import * as repo from "../repository/BookRepository";
+import * as repo from "../repository/BookRepositoryDb";
 
 const books: Book[] = [
-    {
-        id: 1,
-        title: "Clean Code",
-        author_name: "Robert C. Martin",
-        description: "A handbook of agile software craftsmanship",
-        group: "Programming",
-    },
-    {
-        id: 2,
-        title: "Atomic Habits",
-        author_name: "James Clear",
-        description: "How to build good habits",
-        group: "Self-Improvement",
-    },
+
 ];
 
 
